@@ -3,11 +3,26 @@ const app = express()
 const PORT = 8080
 app.set("view engine", "ejs");
 
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
+
+function generateRandomString(string) {
+let result = ''
+for(let i = 6;i>0;i--){
+    result += string[Math.floor(Math.random()*string.length)]
+    
+}
+return result;
+}
+
+
 
 const urlDatabase = {
     "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 }
+
 app.get("/",(req,res)=>{
     res.send("Hello! Welcome home.");
 
@@ -29,9 +44,15 @@ app.get("/urls/:shortURL", (req, res) => {
     const templateVars = { shortURL: req.params.shortURL, longURL: href="#" };
     res.render("urls_show", templateVars);
   });
+  app.post("/urls", (req,res)=>{
+      console.log(req.body);
+      res.send("Ok")
+  });
   
 
 app.listen(PORT,()=>{
 
     console.log(`Example app listening on port ${PORT}!`);
 });
+
+console.log(generateRandomString("helloo"))
