@@ -1,6 +1,7 @@
 const express = require("express");
 const cookie = require("cookie");
 const cookieParser = require("cookie-parser");
+const {getUserByEmail} = require ("./helpers")
 
 // == USE bcrypt when storing passwords
 const bcrypt = require("bcryptjs");
@@ -26,18 +27,7 @@ function generateRandomString(string) {
   }
   return result.toLocaleLowerCase();
 }
-const getUserByEmail = function (email, password) {
-  let foundUser = null;
-  for (user in users) {
-    if (
-      users[user].email === email &&
-      bcrypt.compareSync(password, users[user].password)
-    ) {
-      foundUser = users[user];
-    }
-  }
-  return foundUser;
-};
+
 const users = {
   RandomID: {
     id: "userRandomID",
@@ -73,17 +63,6 @@ const urlsForUser = (user_id) => {
   console.log("HERE:", shortURLs);
   return shortURLs;
 };
-
-for (const key in urlDatabase) {
-  // console.log("KEYS", key);
-  // console.log("longurl", urlDatabase[key].longURL);
-  // console.log("userID", urlDatabase[key].userID);
-}
-// const urlDatabase = {
-//   b2xVn2: "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com",
-// };
-
 app.get("/", (req, res) => {
   res.send("Hello! Welcome home.");
 });
@@ -222,37 +201,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[shortURL];
   res.redirect("/urls");
 });
-// app.post("/urls/:shortURL", (req, res) => {
-//   const userId = req.cookies.user_id
-//   const shortURL = req.params.shortURL;
-//   const longURL = urlDatabase.params.shortURL["longURl"] = req.body.longURL;
-//   // console.log("LONGURL",longURL)
-//   if (userId) {
-//     if (userId === urlDatabase[shortURL]['userID']) {
-//
-//       for (const key in urlDatabase) {
-//
-//         if (key === shortURL) {
-//           let templateVars = {
-//             shortURL: req.params.shortURL,
-//             longURL: longURL,
-//             user: users[userId]
-//           };
-//           return res.render('urls_show', templateVars);
-//
-//         }
-//
-//       }
-//       return res.status(403).send('shortURL id is invalid');
-//     }
-//     return res.status(403).send('URL not associated with userID');
-//
-//   }
-//
-//   res.redirect('/login');
-//
-//
-// });
 
 app.post("/urls/:shortURL/", (req, res) => {
   res.redirect(`/urls/${req.params.shortURL}`);
@@ -268,14 +216,17 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  let user = getUserByEmail(email, password);
+  let user = getUserByEmail(email, users);
+  
+
   if (!user) {
     res.send("Error code: 403, Account not registerd");
     return;
-  }
-  res.cookie("user_id", user.id);
+  } else if (bcrypt.compareSync(password, user.password)) {
+    res.cookie("user_id", user.id);
 
-  res.redirect("/urls");
+    res.redirect("/urls");
+  }
 });
 
 app.post("/logout", (req, res) => {
@@ -286,3 +237,5 @@ app.post("/logout", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+module.exports = {users}
