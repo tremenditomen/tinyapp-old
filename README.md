@@ -4,9 +4,11 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["screenshot description"](https://github.com/tremenditomen/tinyapp/blob/master/docs/logged%20in%20with%20no%20urls.png?raw=true)
+!["logged into an email with no short urls created"](https://github.com/tremenditomen/tinyapp/blob/master/docs/logged%20in%20with%20no%20urls.png?raw=true)
 
-!["screenshot description"](https://github.com/tremenditomen/tinyapp/blob/master/docs/urls.png?raw=true)
+!["inside the port:8080/urls"](https://github.com/tremenditomen/tinyapp/blob/master/docs/urls.png?raw=true)
+
+!["logged into an email with urls created"](https://github.com/tremenditomen/tinyapp/blob/master/docs/logged%20in%20with%20urls.png?raw=true)
 
 ## Dependencies
 
