@@ -1,14 +1,12 @@
 const express = require("express");
 const cookie = require("cookie");
 const cookieParser = require("cookie-parser");
-const {getUserByEmail} = require ("./helpers")
+const { getUserByEmail } = require("./helpers");
 
 // == USE bcrypt when storing passwords
 const bcrypt = require("bcryptjs");
 const password = "purple-monkey-dinoaur";
 const hashedPassword = bcrypt.hashSync(password, 10);
-
-console.log("hashedPassword", hashedPassword);
 
 const app = express();
 const PORT = 8080;
@@ -60,7 +58,6 @@ const urlsForUser = (user_id) => {
       shortURLs[key] = urlDatabase[key]["longURL"];
     }
   }
-  console.log("HERE:", shortURLs);
   return shortURLs;
 };
 app.get("/", (req, res) => {
@@ -73,20 +70,16 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 app.get("/urls", (req, res) => {
-  // console.log("ALSOHERE",req.cookies)
   const userid = req.cookies["user_id"];
   const user = users[userid];
   const templateVars = { urls: urlsForUser(userid), user: users[userid] };
-  console.log("USERID:", user);
   if (!user) {
     return res.redirect("/login");
   }
-  //   console.log("HERE",templateVars)
   res.render("urls_index", templateVars);
 });
 app.get("/urls/new", (req, res) => {
   const templateVars = { user: req.cookies.user_id };
-  console.log("templatevarsuser:", templateVars["user"]);
   if (!templateVars["user"]) {
     return res.redirect("/login");
   } else {
@@ -157,15 +150,11 @@ app.post("/register", (req, res) => {
 
   // CHECK if user exist
   for (keys in users) {
-    // console.log(users[keys].email);
     if (users[keys].email === email) {
       res.send("status code:400 , email already exists");
       return null;
     }
-    // console.log("USERSEMAIL:",users)
   }
-
-  // console.log("IN RANDOMID:",randomID)
 
   users[randomID] = {
     id: randomID,
@@ -174,8 +163,6 @@ app.post("/register", (req, res) => {
   };
 
   res.cookie("user_id", randomID);
-  // res.cookie("user",users[randomID])
-  // console.log("USERS2:", users);
   res.redirect("/urls");
 });
 app.post("/urls", (req, res) => {
@@ -217,7 +204,6 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   let user = getUserByEmail(email, users);
-  
 
   if (!user) {
     res.send("Error code: 403, Account not registerd");
@@ -238,4 +224,4 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-module.exports = {users}
+module.exports = { users };
