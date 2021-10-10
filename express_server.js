@@ -87,14 +87,20 @@ app.get("/urls/new", (req, res) => {
   }
 });
 app.get("/urls/:shortURL", (req, res) => {
+  const shortUrlsId = req.params.shortURL
   const userid = req.cookies["user_id"];
   const user = users[userid];
-  const shortURL = req.params.shortURL;
+  console.log("user:",user)
+  const shortURL = urlDatabase[req.params.shortURL]
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]["longURL"],
+    longURL: shortURL.longURL,
     user: req.cookies["user_id"],
   };
+    if(userid !== shortURL.userID){
+      res.send("you dont have acces to this url")
+    }
+
   res.render("urls_show", templateVars);
 });
 app.get("/u/:shortURL", (req, res) => {
@@ -125,8 +131,6 @@ app.get("/login", (req, res) => {
   const user = users[userid];
   const email = req.body.email;
   const password = req.body.password;
-  //   if (!user) {
-  //  res.redirect('/login')
 
   const templateVars = {
     shortURL: req.params.shortURL,
@@ -135,6 +139,8 @@ app.get("/login", (req, res) => {
   };
   res.render("urls_login", templateVars);
 });
+
+
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
