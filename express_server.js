@@ -61,7 +61,7 @@ const urlsForUser = (user_id) => {
   return shortURLs;
 };
 app.get("/", (req, res) => {
-  res.send("Hello! Welcome home.");
+  res.redirect("/login");
 });
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -87,6 +87,8 @@ app.get("/urls/new", (req, res) => {
   }
 });
 app.get("/urls/:shortURL", (req, res) => {
+  //cheking to see if one account has access to anothers short urls.
+  
   const shortUrlsId = req.params.shortURL
   const userid = req.cookies["user_id"];
   const user = users[userid];
